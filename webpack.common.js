@@ -10,11 +10,8 @@ module.exports = {
 			path.resolve(__dirname, 'assets'),
 			path.resolve(__dirname, 'src/pages'),
 			path.resolve(__dirname, 'src/components'),
-			path.resolve(__dirname, 'src/metadata'),
 			path.resolve(__dirname, 'src/services'),
-			path.resolve(__dirname, 'src/helpers'),
-			path.resolve(__dirname, 'src/stores'),
-			path.resolve(__dirname, 'src/style')
+			path.resolve(__dirname, 'src/helpers')
 		],
 		extensions: ['.js', '.css', '.json']
 	},
