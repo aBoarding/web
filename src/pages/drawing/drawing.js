@@ -1,45 +1,40 @@
 import React from 'react'
 import './drawing.css'
 
+import Canvas from 'canvas/canvas'
+import SidePanel from './components/sidePanel/sidePanel'
+
+import DrawingHelper from 'drawingHelper'
+
 export default class Drawing extends React.Component {
 
 	state = {
-		canvas: {}
-	}
-
-	componentWillMount() {
-		this.updateCanvasDimensions(window.innerWidth, window.innerHeight)
+		selectedColor: '#353535'
 	}
 
 	componentDidMount() {
-		this.watchWindow()
-		this.context.scale(window.devicePixelRatio, window.devicePixelRatio)
-
-		this.context.fillStyle = "#000"
-		this.context.fillRect(0, 0, 500, 500)
+		this.drawingHelper = new DrawingHelper(this.canvas)
 	}
 
-	watchWindow() {
-		window.onresize = e => {
-			let { innerWidth, innerHeight } = e.target
-			this.updateCanvasDimensions(innerWidth, innerHeight)
-		}
-	}
-
-	updateCanvasDimensions(width, height) {
-		this.setState({ canvas: { 
-			innerWidth: width * window.devicePixelRatio, 
-			innerHeight: height * window.devicePixelRatio
-		}})
+	selectColor(selectedColor) {
+		this.setState({ selectedColor })
+		this.drawingHelper.setColor(selectedColor)
 	}
 
 	render() {
 		return (
-			<div className="drawing">
-				<canvas 
-					width={ this.state.canvas.innerWidth }
-					height={ this.state.canvas.innerHeight }
-					ref={ ref => this.context = ref.getContext('2d') }
+			<div 
+				className="drawing"
+				onMouseDown={ e => this.drawingHelper.startDrawing(e)}
+				onMouseMove={ e => this.drawingHelper.draw(e) }
+				onMouseUp={ () => this.drawingHelper.stopDrawing() }
+			>
+				<SidePanel
+					selectedColor={ this.state.selectedColor }
+					onColorChange={ color => this.selectColor(color) }
+				/>
+				<Canvas
+					bind={ canvas => this.canvas = canvas }
 				/>
 			</div>
 		)
