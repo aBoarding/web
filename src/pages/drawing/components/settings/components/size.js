@@ -16,33 +16,36 @@ export default class Size extends React.Component {
 
 	move(e) {
 		if(!this.moving) return
-		let { left } = this.size.getBoundingClientRect(), { pageX } = e
-
-		this.setState({ 
-			position: Math.min(
+		let { left } = this.size.getBoundingClientRect(), 
+			{ pageX } = e,
+			position = Math.min(
 				Math.max(pageX - left, this.handle.offsetWidth / 2), 
 				this.bar.offsetWidth + (this.handle.offsetWidth / 2)
 			)
-		})
 
-		this.props.onChange(this.getSizeForPercentage())
+		this.setState({ position })
+		this.props.onChange(this.getSizeForPercentage(position))
 	}
 
-	getFillPercentage() {
+	getFillPercentage(position) {
 		if(!this.bar || !this.handle) return 0
-		return ((this.state.position - this.handle.offsetWidth / 2) * 100) / this.bar.offsetWidth
+		return ((position || this.state.position - this.handle.offsetWidth / 2) * 100) / this.bar.offsetWidth
 	}
 
-	getSizeForPercentage() {
+	getSizeForPercentage(position) {
 		return Math.round(
-			((this.getFillPercentage() * (this.props.maxSize - this.props.minSize)) / 100) 
+			((this.getFillPercentage(position) * (this.props.maxSize - this.props.minSize)) / 100) 
 			+ this.props.minSize
 		)
 	}
 
 	render() {
 		return (
-			<div className="size" ref={ ref => this.size = ref }>
+			<div 
+				ref={ ref => this.size = ref }
+				className="size"
+				onMouseDown={ e => this.startMoving(e) }
+			>
 				<div 
 					ref={ ref => this.handle = ref }
 					className="handle"
@@ -51,7 +54,6 @@ export default class Size extends React.Component {
 				<div 
 					ref={ ref => this.bar = ref }
 					className="bar"
-					onMouseDown={ e => this.startMoving(e) }
 				>
 					<div 
 						className="fill"
