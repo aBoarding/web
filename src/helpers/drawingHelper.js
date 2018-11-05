@@ -5,6 +5,7 @@ export default (canvas) => {
 		size
 
 	const startDrawing = e => {
+		if(e.target.tagName !== 'CANVAS') return
 		drawing = true
 			
 		createStroke()
