@@ -12,7 +12,10 @@ const Colors = props => (
 					className={ `color ${ props.selected === color ? 'active' : '' }` }
 				>
 					<div className="side" style={{ backgroundColor: color }}/>
-					<div className="front" style={{ backgroundColor: color }}/>
+					<div className="front">
+						<div className="back" style={{ backgroundColor: color }}/>
+						<div className="paint" style={{ backgroundColor: color }}/>
+					</div>
 				</div>
 			))
 		}
