@@ -8,12 +8,11 @@ import DrawingHelper from 'drawingHelper'
 
 export default class Drawing extends React.Component {
 
-	state = {
-		selectedColor: '#353535'
-	}
+	state = { selectedColor: '#353535' }
 
 	componentDidMount() {
 		this.drawingHelper = new DrawingHelper(this.canvas)
+		window.addEventListener('keydown', e => this.handleCtrlZ(e))
 	}
 
 	selectColor(selectedColor) {
@@ -24,6 +23,11 @@ export default class Drawing extends React.Component {
 	selectSize(selectedSize) {
 		this.setState({ selectedSize })
 		this.drawingHelper.setSize(selectedSize)
+	}
+
+	handleCtrlZ(e) {
+		e.key === 'z' && e.ctrlKey &&
+			this.drawingHelper.updateStrokes(prevStrokes => prevStrokes.slice(0, -1))
 	}
 
 	render() {

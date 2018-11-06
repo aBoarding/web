@@ -61,5 +61,10 @@ export default (canvas) => {
 		size = newSize
 	}
 
-	return { startDrawing, draw, stopDrawing, setColor, setSize }
+	const updateStrokes = value => {
+		strokes = (typeof value === 'function' ? value(strokes) : value) || []
+		redraw()
+	}
+
+	return { startDrawing, draw, stopDrawing, setColor, setSize, updateStrokes }
 }
