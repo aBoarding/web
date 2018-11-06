@@ -27,16 +27,16 @@ export default class Size extends React.Component {
 		this.props.onChange(this.getSizeForPercentage(position))
 	}
 
-	getFillPercentage(position) {
-		if(!this.bar || !this.handle) return 0
-		return ((position || this.state.position - this.handle.offsetWidth / 2) * 100) / this.bar.offsetWidth
+	getSizeForPercentage(position) {
+		let min = this.props.minSize,
+			max = this.props.maxSize - min
+
+		return Math.round(((this.getFillPercentage(position) * max) / 100) + min)
 	}
 
-	getSizeForPercentage(position) {
-		return Math.round(
-			((this.getFillPercentage(position) * (this.props.maxSize - this.props.minSize)) / 100) 
-			+ this.props.minSize
-		)
+	getFillPercentage(position) {
+		if(!this.bar || !this.handle) return 0
+		return (((position || this.state.position) - this.handle.offsetWidth / 2) * 100) / this.bar.offsetWidth
 	}
 
 	render() {

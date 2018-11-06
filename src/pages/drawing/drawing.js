@@ -43,7 +43,7 @@ export default class Drawing extends React.Component {
 					color={ this.state.selectedColor }
 					size={ this.state.selectedSize }
 					maxSize={ 50 }
-					minSize={ 5 }
+					minSize={ 30 }
 					onColorChange={ color => this.selectColor(color) }
 					onSizeChange={ size => this.selectSize(size) }
 				/>
