@@ -4,10 +4,11 @@ export default (canvas) => {
 		drawing = false,
 		color,
 		size,
-		onRedrawCallbacks = []
+		onRedrawCallbacks = [],
+		drawingBlocked = false
 
 	const startDrawing = e => {
-		if(e.target.tagName !== 'CANVAS') return
+		if(e.target.tagName !== 'CANVAS' || drawingBlocked) return
 		drawing = true
 			
 		createStroke()

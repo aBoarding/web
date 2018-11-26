@@ -1,13 +1,17 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import './style.css'
 
 import Drawing from 'drawing/drawing'
+import Home from 'home/home'
 
 const Routes = () => (
 	<BrowserRouter>
-		<Route exact path="/" component={ Drawing }/>
+		<Switch>
+			<Route exact path="/" component={ Home }/>
+			<Route exact path="/:type/:channel" component={ Drawing }/>
+		</Switch>
 	</BrowserRouter>
 )
 

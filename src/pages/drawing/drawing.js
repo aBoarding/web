@@ -12,11 +12,24 @@ export default class Drawing extends React.Component {
 	state = { selectedColor: '#353535' }
 
 	componentDidMount() {
-		this.drawingHelper = new DrawingHelper(this.canvas)
-		this.drawingHelper.onRedraw(strokes => StreamHelper.updateStream(strokes))
+		let { type, channel } = this.props.match.params
+		StreamHelper.connect(type, channel, () => {
+			this.setState({ connected: true })
+			this.setupListeners()
+		})
+	}
 
+	setupListeners() {
 		window.addEventListener('keydown', e => this.handleCtrlZ(e))
-		StreamHelper.onStreamUpdate(strokes => this.drawingHelper.updateStrokes(strokes))
+		this.drawingHelper = new DrawingHelper(this.canvas)
+
+		this.drawingHelper.onRedraw(strokes => {
+			StreamHelper.updateStream(strokes)
+		})
+
+		StreamHelper.onStreamUpdate(strokes => {
+			this.drawingHelper.updateStrokes(strokes)
+		})
 	}
 
 	selectColor(selectedColor) {
@@ -35,26 +48,28 @@ export default class Drawing extends React.Component {
 	}
 
 	render() {
-		return (
-			<div 
-				className="drawing"
-				onMouseDown={ e => this.drawingHelper.startDrawing(e)}
-				onMouseMove={ e => this.drawingHelper.draw(e) }
-				onMouseUp={ () => this.drawingHelper.stopDrawing() }
-				onMouseLeave={ () => this.drawingHelper.stopDrawing() }
-			>
-				<Settings
-					color={ this.state.selectedColor }
-					size={ this.state.selectedSize }
-					maxSize={ 50 }
-					minSize={ 30 }
-					onColorChange={ color => this.selectColor(color) }
-					onSizeChange={ size => this.selectSize(size) }
-				/>
-				<Canvas
-					bind={ canvas => this.canvas = canvas }
-				/>
-			</div>
-		)
+		return this.state.connected
+			? (
+				<div 
+					className="drawing"
+					onMouseDown={ e => this.drawingHelper.startDrawing(e) }
+					onMouseMove={ e => this.drawingHelper.draw(e) }
+					onMouseUp={ () => this.drawingHelper.stopDrawing() }
+					onMouseLeave={ () => this.drawingHelper.stopDrawing() }
+				>
+					<Settings
+						color={ this.state.selectedColor }
+						size={ this.state.selectedSize }
+						maxSize={ 50 }
+						minSize={ 30 }
+						onColorChange={ color => this.selectColor(color) }
+						onSizeChange={ size => this.selectSize(size) }
+					/>
+					<Canvas
+						bind={ canvas => this.canvas = canvas }
+					/>
+				</div>
+			)
+			: null
 	}
 }
