@@ -5,6 +5,7 @@ import Canvas from 'canvas/canvas'
 import Settings from './components/settings/settings'
 
 import DrawingHelper from 'drawingHelper'
+import StreamHelper from 'streamHelper'
 
 export default class Drawing extends React.Component {
 
@@ -12,7 +13,10 @@ export default class Drawing extends React.Component {
 
 	componentDidMount() {
 		this.drawingHelper = new DrawingHelper(this.canvas)
+		this.drawingHelper.onRedraw(strokes => StreamHelper.updateStream(strokes))
+
 		window.addEventListener('keydown', e => this.handleCtrlZ(e))
+		StreamHelper.onStreamUpdate(strokes => this.drawingHelper.updateStrokes(strokes))
 	}
 
 	selectColor(selectedColor) {

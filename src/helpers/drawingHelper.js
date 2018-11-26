@@ -1,8 +1,10 @@
 export default (canvas) => {
-	let strokes = [],
+	let context = canvas.getContext('2d'),
+		strokes = [],
 		drawing = false,
 		color,
-		size
+		size,
+		onRedrawCallbacks = []
 
 	const startDrawing = e => {
 		if(e.target.tagName !== 'CANVAS') return
@@ -35,8 +37,6 @@ export default (canvas) => {
 	}
 
 	const redraw = () => {
-		let context = canvas.getContext('2d')
-		
 		context.clearRect(0, 0, canvas.width, canvas.height)
 		context.lineJoin = 'round'
 
@@ -51,6 +51,8 @@ export default (canvas) => {
 
 			context.stroke()
 		})
+
+		onRedrawCallbacks.forEach(callback => callback(strokes))
 	}
 
 	const setColor = newColor => {
@@ -62,9 +64,23 @@ export default (canvas) => {
 	}
 
 	const updateStrokes = value => {
-		strokes = (typeof value === 'function' ? value(strokes) : value) || []
+		let updatedStrokes = (typeof value === 'function' ? value(strokes) : value) || []
+		if(strokesDidNotChange(updatedStrokes)) return
+
+		strokes = updatedStrokes
 		redraw()
 	}
 
-	return { startDrawing, draw, stopDrawing, setColor, setSize, updateStrokes }
+	const strokesDidNotChange = next => (
+		strokes && next &&
+		strokes[strokes.length - 1] && next[next.length - 1] &&
+		strokes[strokes.length - 1].points && next[next.length - 1].points && 
+		strokes[strokes.length - 1].points.length == next[next.length - 1].points.length
+	)
+
+	const onRedraw = callback => {
+		onRedrawCallbacks.push(callback)
+	}
+
+	return { startDrawing, draw, stopDrawing, setColor, setSize, updateStrokes, onRedraw }
 }
